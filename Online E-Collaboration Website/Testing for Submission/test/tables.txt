@@ -1,0 +1,93 @@
+PHAM UPDATED SOME OF THE TABLES
+
+CREATE TABLE `taskStatus_T` (
+  `taskStatus_id` INT(10) NOT NULL,
+  `taskStatus_title` VARCHAR(250) NOT NULL,
+  `taskStatus_info` VARCHAR(25),
+  PRIMARY KEY (`taskStatus_id`)
+);
+
+INSERT INTO `taskStatus_T` VALUES 
+(1, 'approved', 'task that has been done, cannot be changed'),
+(2, 'in progress', 'at least one user is still in progress'),
+(3, 'rejected', 'task that has at least one user rejected'),
+(4, 'deleted', 'not visible anymore');
+
+
+CREATE TABLE `taskDetails_T` (
+  `task_id` INT(10) NOT NULL,
+  `user_id` INT(10) NOT NULL,
+  `data_id` INT(10) NOT NULL,
+  `taskPart_status` INT(10) NOT NULL,
+  PRIMARY KEY(`task_id`, `user_id`, `data_id`)
+) ENGINE = InnoDB DEFAULT CHARSET = latin1;
+
+INSERT INTO
+  `taskDetails_T`
+VALUES
+  (000001, 002, 0104, 1),
+  (000001, 004, 0104, 1),
+  (000001, 006, 0104, 0),
+  (000002, 003, 0105, 1),
+  (000002, 005, 0105, 1),
+  (000002, 007, 0105, 0);
+  
+  
+  
+******* Task Template Tables *******
+
+
+
+CREATE TABLE `taskTemplate_T` (
+`taskTemplate_id` INT(10) NOT NULL AUTO_INCREMENT,
+`policy_id` INT(10) NOT NULL,
+`task_type` INT(10) NOT NULL,
+`task_title` VARCHAR(50) NOT NULL,
+`task_instructions` VARCHAR(250),
+`templateStatus_id` INT(10) NOT NULL,
+PRIMARY KEY(`taskTemplate_id`)
+);
+
+
+INSERT INTO `taskTemplate_T` VALUES (001, 02, 2, 'report', 'Manager creates report file and adds part A,B, and C; staff view part B; customer view part C', 1),
+(002, 03, 1, 'travel', 'Manager creates travel form and fill-in part A, staff fill-in part B, customer view and sign-in part C', 1);
+
+
+
+CREATE TABLE `taskTemplateDetails_T` (
+`taskTemplate_id` INT(10) NOT NULL,
+`userRole_id` INT(10) NOT NULL,
+`dataType_id` INT(10) NOT NULL,
+PRIMARY KEY(`taskTemplate_id`,`userRole_id`, `dataType_id`)
+);
+  
+  
+INSERT INTO `taskTemplateDetails_T` VALUES 
+(001,2,4),
+(001,3,4),
+(001,4,4),
+(002,2,5),
+(002,3,5),
+(002,4,5);
+
+
+
+////////////////////////////////
+Update to jobTemplateDetails_T
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+CREATE TABLE `jobTemplateDetails_T` (
+  `jobTemplate_id` INT(10) NOT NULL,
+  `taskTemplate_id` INT(10) NOT NULL,
+  `job_taskOrder` INT(10) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  `detailStatus_id` INT(10) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO
+  `jobTemplateDetails_T` (`jobTemplate_id`, `taskTemplate_id`, `detailStatus_id`)
+VALUES
+  (001, 001, 1),
+  (001, 002, 1),
+  (001, 003, 1),
+  (001, 004, 1),
+  (001, 005, 1);

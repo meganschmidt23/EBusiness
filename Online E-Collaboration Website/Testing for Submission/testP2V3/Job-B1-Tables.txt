@@ -1,0 +1,289 @@
+SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
+SET time_zone = "+00:00";
+
+// GENERIC TABLES NEEDED FOR TASK AND JOB TEMPLATES
+
+CREATE TABLE `templateStatus_T` (
+  `templateStatus_id` INT(10) NOT NULL,
+  `templateStatus_title` VARCHAR(250) NOT NULL,
+  `templateStatus_info` VARCHAR(250),
+  PRIMARY KEY (`templateStatus_id`)
+);
+
+INSERT INTO `templateStatus_T` VALUES
+(1, 'ready', 'template is ready to be used'),
+(2, 'not-ready', 'the template is not ready or should not be used now'),
+(3, 'deleted', 'not visible anymore');
+
+// JOB TABLES
+
+  CREATE TABLE `jobType_T` (
+`jobType_id` INT(10) NOT NULL AUTO_INCREMENT,
+`jobType_title` VARCHAR(25) NOT NULL,
+`jobType_info` VARCHAR(250) NOT NULL,
+  PRIMARY KEY (`jobType_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO `jobType_T` (`jobType_id`, `jobType_title`, `jobType_info`) VALUES
+(1, 'urgent', 'job with high priority that needs to get done asap'),
+(2, 'normal', 'job with normal priority');
+
+CREATE TABLE `jobStatus_T` (
+`jobStatus_id` INT(10) NOT NULL AUTO_INCREMENT,
+`jobStatus_title` VARCHAR(25) NOT NULL,
+`jobStatus_info` VARCHAR(250) NOT NULL,
+  PRIMARY KEY (`jobStatus_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO `jobStatus_T` (`jobStatus_id`, `jobStatus_title`, `jobStatus_info`) VALUES
+(1, 'progress', 'job that is not done yet'),
+(2, 'done', 'job that has been done'),
+(3, 'deleted', 'not visible anymore');
+
+CREATE TABLE `jobs` (
+`job_id` int(10) NOT NULL AUTO_INCREMENT,
+`title` varchar(250) NOT NULL,
+`job_type` VARCHAR(250) NOT NULL,
+`owner` VARCHAR(250) NOT NULL,
+`date_created` DATETIME NOT NULL,
+`deadline` DATETIME NOT NULL,
+`status` varchar(250) NOT NULL,
+  PRIMARY KEY (`job_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO `jobs` (`job_id`, `title`, `job_type`, `owner`, `status`) VALUES
+(1, 'transfer', 'active', 'john smith', 'open');
+
+CREATE TABLE `jobDetails_T` (    
+`job_id` INT(10) NOT NULL,
+`task_id` INT(10) NOT NULL,
+`job_taskOrder` INT(10) NOT NULL,
+PRIMARY KEY (`job_id`),
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO `jobDetails_T` VALUES 
+    (000001, 000001, 1),
+    (000001, 000001, 2);
+
+// TASKS TABLES
+
+CREATE TABLE `task_T` (
+`task_id` INT(10) NOT NULL AUTO_INCREMENT,
+`policy_id` INT(10) NOT NULL,
+`task_type` INT(10) NOT NULL,
+`task_status` INT(10) NOT NULL,
+`task_owner` INT(10) NOT NULL,
+`task_title` VARCHAR(50) NOT NULL,
+`task_instructions` VARCHAR(250),
+`task_deadline` DATETIME NOT NULL,
+`task_created` DATETIME NOT NULL,
+PRIMARY KEY(`task_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO
+  `task_T` (
+    `policy_id`,
+    `task_type`,
+    `task_status`,
+    `task_owner`,
+    `task_title`,
+    `task_instructions`
+  )
+VALUES
+  (
+    02,
+    2,
+    0,
+    002,
+    'report',
+    'Manager creates report file and adds part A,B, and C; staff view part B; customer view part C'
+  ),
+  (
+    03,
+    1,
+    0,
+    003,
+    'travel',
+    'Manager creates travel form and fill-in part A, staff fill-in part B, customer view and sign-in part C'
+  );
+
+CREATE TABLE `taskStatus_T` (
+  `taskStatus_id` INT(10) NOT NULL,
+  `taskStatus_title` VARCHAR(250) NOT NULL,
+  `taskStatus_info` VARCHAR(25),
+  PRIMARY KEY (`taskStatus_id`)
+);
+
+INSERT INTO `taskStatus_T` VALUES 
+(1, 'approved', 'task that has been done, cannot be changed'),
+(2, 'in progress', 'at least one user is still in progress'),
+(3, 'rejected', 'task that has at least one user rejected'),
+(4, 'deleted', 'not visible anymore');
+
+CREATE TABLE `taskDetails_T` (
+  `task_id` INT(10) NOT NULL,
+  `user_id` INT(10) NOT NULL,
+  `data_id` INT(10) NOT NULL,
+  `taskPart_status` INT(10) NOT NULL,
+  PRIMARY KEY(`task_id`, `user_id`, `data_id`)
+) ENGINE = InnoDB DEFAULT CHARSET = latin1;
+
+INSERT INTO
+  `taskDetails_T`
+VALUES
+  (000001, 002, 0104, 1),
+  (000001, 004, 0104, 1),
+  (000001, 006, 0104, 0),
+  (000002, 003, 0105, 1),
+  (000002, 005, 0105, 1),
+  (000002, 007, 0105, 0);
+
+// TASK TEMPLATES TABLES
+
+CREATE TABLE `taskTemplate_T` (
+`taskTemplate_id` INT(10) NOT NULL AUTO_INCREMENT,
+`policy_id` INT(10) NOT NULL,
+`task_type` INT(10) NOT NULL,
+`task_title` VARCHAR(50) NOT NULL,
+`task_instructions` VARCHAR(250),
+`templateStatus_id` INT(10) NOT NULL,
+PRIMARY KEY(`taskTemplate_id`)
+);
+
+INSERT INTO `taskTemplate_T` VALUES (001, 02, 2, 'report', 'Manager creates report file and adds part A,B, and C; staff view part B; customer view part C', 1),
+(002, 03, 1, 'travel', 'Manager creates travel form and fill-in part A, staff fill-in part B, customer view and sign-in part C', 1);
+
+CREATE TABLE `taskTemplateDetails_T` (
+`taskTemplate_id` INT(10) NOT NULL,
+`userRole_id` INT(10) NOT NULL,
+`dataType_id` INT(10) NOT NULL,
+PRIMARY KEY(`taskTemplate_id`,`userRole_id`, `dataType_id`)
+);
+  
+INSERT INTO `taskTemplateDetails_T` VALUES 
+(001,2,4),
+(001,3,4),
+(001,4,4),
+(002,2,5),
+(002,3,5),
+(002,4,5);
+
+// JOB TEMPLATE TABLES
+
+CREATE TABLE `jobTemplate_T` (
+`jobTemplate_id` INT(10) NOT NULL AUTO_INCREMENT,
+`job_title` VARCHAR(25) NOT NULL,
+`job_instructions` VARCHAR(250),
+`templateStatus_id` INT(10) NOT NULL,
+PRIMARY KEY(`jobTemplate_id`)
+);
+
+INSERT INTO `jobTemplate_T` VALUES 
+(001,'report', 'Manager creates report file and adds part A,B, and C; staff view part B; customer view part C', 1),
+(002,'travel','Manager creates travel form and fill-in part A, staff fill-in part B, customer view and sign-in part C', 1);
+
+CREATE TABLE `jobTemplateDetails_T` (
+  `jobTemplate_id` INT(10) NOT NULL,
+  `taskTemplate_id` INT(10) NOT NULL,
+  `job_taskOrder` INT(10) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  `detailStatus_id` INT(10) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO
+  `jobTemplateDetails_T` (`jobTemplate_id`, `taskTemplate_id`, `detailStatus_id`)
+VALUES
+  (001, 001, 1),
+  (001, 002, 1),
+  (001, 003, 1),
+  (001, 004, 1),
+  (001, 005, 1);
+
+// TABLES FROM OTHER GROUPS USED IN P2-V3
+
+CREATE TABLE userRole_T (
+  userRole_id int(3) NOT NULL AUTO_INCREMENT,
+  userRole_title varchar(50) NOT NULL,
+  userRole_info varchar(255) NOT NULL,
+  CONSTRAINT urol_pk  PRIMARY KEY (userRole_id)
+)
+ENGINE=InnoDB;
+
+INSERT INTO `userRole_T` (`userRole_id`, `userRole_title`, `userRole_info`) VALUES
+(NOT NULL, 'Admin', 'Person with highest access rights'),
+(NOT NULL, 'Manager', 'Leader of a group or division of the company'),
+(NOT NULL, 'Staff', 'Member of a group or division of the company'),
+(NOT NULL, 'Customer', 'Customer of the company'),
+(NOT NULL, 'Public', 'Anyone who is not logged in'),
+(NOT NULL, 'Any', 'Any of the above');
+
+CREATE TABLE user_T (
+  user_id int(3) NOT NULL AUTO_INCREMENT,
+  userRole_id int(3) NOT NULL,
+  user_loginName varchar(25) NOT NULL,
+  user_pass varchar(25) NOT NULL,	
+  user_fullname varchar(255) NOT NULL,
+  user_email varchar(100) NOT NULL,
+  user_info varchar(255) NOT NULL,
+  userStatus_id int(3) NOT NULL,
+  CONSTRAINT uid_pk PRIMARY KEY (user_id),
+  CONSTRAINT uRid_fk FOREIGN KEY (`userRole_id`) REFERENCES userRole_T(`userRole_id`)ON DELETE CASCADE,
+  CONSTRAINT uSid_fk FOREIGN KEY (`userStatus_id`)REFERENCES userStatus_T(`userStatus_id`) ON DELETE CASCADE
+
+)
+ENGINE=InnoDB;
+
+INSERT INTO user_T (user_id, userRole_id, user_loginName, user_pass , user_fullName, user_email, user_info, userStatus_id) VALUES
+(NOT NULL, 1, 'u0', 'p0','n0', 'e0@abc.com', 'i0', 1),
+(NOT NULL, 2, 'u1', 'p1','n1', 'e1@xyz.com', 'i1', 1),
+(NOT NULL, 2, 'u2', 'p2','n2', 'e2@abc.com', 'i2', 1),
+(NOT NULL, 3, 'u3', 'p3','n3', 'e3@abc.com', 'i3', 1),
+(NOT NULL, 3, 'u4', 'p4','n4', 'e4@xyz.com', 'i4', 1),
+(NOT NULL, 4, 'u5', 'p5','n5', 'e5@xyz.com', 'i5', 1),
+(NOT NULL, 4, 'u6', 'p6','n6', 'e6@xyz.com', 'i6', 1),
+(NOT NULL, 4, 'u7', 'p7','n7', 'e7@xyz.com', 'i7', 2);
+
+CREATE TABLE `policy_T` (
+  `policy_id` int(2) NOT NULL AUTO_INCREMENT,
+  `policy_title` varchar(2) NOT NULL,
+  `policy_owner` int(3) NOT NULL,
+  `policy_status` int(1) NOT NULL,
+  `policy_created` varchar(255) NOT NULL,
+  `policy_expired` varchar(255) NOT NULL,
+  PRIMARY KEY (`policy_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+INSERT INTO `policy_T` (`policy_id`, `policy_title`, `policy_owner`, `policy_status`, `policy_created`, `policy_expired`) VALUES
+(01, 'X', 001, 2, '2010-01-19 03:14:07', '2050-01-19 03:14:07'),
+(02, 'P1', 002, 1, '2018-01-19 05:10:28','2025-01-19 05:10:28'),
+(03, 'P2', 003, 1, '2018-01-19 09:13:07', '2035-01-19 09:13:07');
+
+CREATE TABLE `data_T` (
+  `data_id` int(4) NOT NULL AUTO_INCREMENT,
+  `dataStatus_id` int(4) NOT NULL,
+  `data_location` varchar(255) NOT NULL,
+  `dataType_id` int(1) NOT NULL,
+  `data_modifier` int(3) NOT NULL,
+  `data_changed` varchar(255) NOT NULL,
+  `data_owner` int(3) NOT NULL,
+  `data_created` varchar(255) NOT NULL,
+  PRIMARY KEY (`data_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+INSERT INTO `data_T` (`data_id`, `dataStatus_id`, `data_location`, `dataType_id`, `data_modifier`, `data_changed`, `data_owner`, `data_created`) VALUES
+('0001', '1111', 'user|user_info', '6', '001', '2025-01-19 05:10:28', '001', '2019-01-19 05:10:28'),
+('0104', '1111', '/upload/file1.txt', '5', '002', '2035-01-19 09:13:07', '002', '2035-01-19 09:13:07'),
+('0105', '1111', '/form/form1.json', '4', '003', '2025-01-19 05:10:28', '003', '2025-01-19 05:10:28');
+
+CREATE TABLE `dataType_T` (
+  ` dataType_id ` int(1) NOT NULL AUTO_INCREMENT,
+  ` dataType_title` varchar(20) NOT NULL,
+  ` dataType_info ` varchar(255) NOT NULL,
+  PRIMARY KEY (`dataType_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+INSERT INTO `dataType_T` (`dataType_id`, `dataType_title`, `dataType_info`) VALUES
+(1, 'Any', 'Any data item'),
+(2, 'Self', 'Data item created/owned by the same user'),
+(3, 'Other', 'Data item created by the other users'),
+(4, 'Form', 'A web form to be filled-in'),
+(5, 'File', 'A file attached to a task or owned by a user');

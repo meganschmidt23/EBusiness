@@ -1,0 +1,50 @@
+
+***** Conor ***** Tasks
+ONE
+// table is empty or has no data-items assigned
+INSERT INTO taskDetails_T (task_id, user_id, data_id, taskPart_status) VALUES (?,?,0,?);
+
+TWO
+// insert new data-tem to all users by duplicating rows
+INSERT INTO taskDetails_T (task_id, user_id, data_id, taskPart_status)
+    SELECT DISTINCT 2, user_id, 555, 2 FROM taskDetails_T WHERE task_id = 2;
+
+THREE
+// INSERT new user with data items
+INSERT INTO taskDetails_T (task_id, user_id, data_id, taskPart_status)
+    SELECT DISTINCT 2, 20, data_id, 2 FROM taskDetails_T WHERE task_id = 2;
+
+
+
+
+
+
+***** Ron ***** Task Templates
+ONE
+// table is empty or has no data-items assigned
+INSERT INTO taskTemplateDetails_T (taskTemplate_id, userRole_id, data_id) VALUES (?,?,0);
+
+TWO
+// insert new data-tem to all users by duplicating rows
+INSERT INTO taskTemplateDetails_T (taskTemplate_id, userRole_id, dataType_id)
+    SELECT DISTINCT 2, userRole_id, 555, 2 FROM taskTemplateDetails_T WHERE taskTemplate_id = 2;
+
+THREE
+// INSERT new user with data items
+INSERT INTO taskTemplateDetails_T (taskTemplate_id, userRole_id, dataType_id)
+    SELECT DISTINCT 2, 20, dataType_id, 2 FROM taskTemplateDetails_T WHERE taskTemplate_id = 2;
+
+
+
+
+
+JOB TEMPLATES
+
+// ADD
+INSERT INTO jobTemplateDetails_T (jobTemplate_id, taskTemplate_id, detailStatus_id) VALUES (?, ?, 1)
+
+// REMOVE
+UPDATE jobTemplateDetails_T SET detailStatus_id = 0 WHERE jobTemplate_id = ? AND taskTemplate_id = ?;
+
+// VIEW
+SELECT * FROM jobTemplateDetails_T WHERE detailStatus_id != 0 ORDER BY job_taskOrder ASC;

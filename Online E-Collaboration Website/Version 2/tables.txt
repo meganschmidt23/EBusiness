@@ -1,0 +1,321 @@
+
+SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
+SET time_zone = "+00:00";
+
+CREATE TABLE `a_users` (
+  `uid` int(10) NOT NULL AUTO_INCREMENT,
+  `username` varchar(50) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  PRIMARY KEY (`uid`),
+  UNIQUE KEY `username` (`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+CREATE TABLE `a_products` (
+  `pid` int(10) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL,
+  `price` decimal(10,2) NOT NULL,
+  `image` varchar(150) NOT NULL,
+  `quantity` int(10) NOT NULL,
+  PRIMARY KEY (`pid`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
+
+INSERT INTO `a_products` (`pid`, `name`, `price`, `image`,`quantity`) VALUES
+(1, 'HP Laptop i7', 600.00, 'images/products/laptop.jpg', 100),
+(2, 'Tech Bag', 50.00, 'images/products/laptop-bag.jpg', 200 ),
+(3, 'Phone X', 700.00, 'images/products/iphone.jpg', 300);
+
+CREATE TABLE `a_orders` (
+  `oid` int(10) NOT NULL AUTO_INCREMENT,
+  `username` varchar(250) NOT NULL,
+  `bank` int(20) NOT NULL,
+  `total` decimal(10,2) NOT NULL,
+  `ship` varchar(1000) NOT NULL,
+  `datecreation` DATETIME NOT NULL,
+  PRIMARY KEY (`oid`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE `a_orderscontents` (
+  `oid` int(10) NOT NULL,
+  `pid` int(10) NOT NULL,
+  `paidprice` decimal(10,2) NOT NULL,
+  `quantity` int(10) NOT NULL,
+   PRIMARY KEY (`oid`,`pid`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+// Tables specific to Unit B
+
+CREATE TABLE `jobs` (
+`job_id` int(10) NOT NULL AUTO_INCREMENT,
+`title` varchar(250) NOT NULL,
+`job_type` VARCHAR(250) NOT NULL,
+`owner` VARCHAR(250) NOT NULL,
+`date_created` DATETIME NOT NULL,
+`deadline` DATETIME NOT NULL,
+`status` varchar(250) NOT NULL,
+  PRIMARY KEY (`job_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO `jobs` (`job_id`, `title`, `job_type`, `owner`, `status`) VALUES
+(1, 'transfer', 'active', 'john smith', 'open');
+
+CREATE TABLE `tasks` (
+  `task_id` int(10) NOT NULL,
+  `job_id` int(10) NOT NULL,
+  `task_type` varchar(250) NOT NULL,
+  `owner` varchar(250) NOT NULL,
+  `communication_channel` varchar(250),
+  `order` int(10) NOT NULL,
+  `deadline` DATETIME NOT NULL,
+  `status` varchar(250) NOT NULL,
+  PRIMARY KEY (`job_id`, `task_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO `tasks`(`task_id`, `job_id`, `task_type`, `owner`, `communication_channel`, `order`, `status`) 
+VALUES (1, 1, 'edit', 'ConorID', 'Comm Channel 1', 1, 'open');
+
+CREATE TABLE `taskdetails` (
+  `task_id` int(10) NOT NULL,
+  `user_id` int(10) NOT NULL,
+  `data` varchar(250) NOT NULL,
+  `action` varchar(250) NOT NULL,
+  PRIMARY KEY(`task_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO `taskdetails`(`task_id`,`user_id`,`data`,`action`) 
+VALUES (1,1,'http://example.com/','Edit');
+
+CREATE TABLE `templates` (
+`template_id` INT(10) NOT NULL AUTO_INCREMENT,
+`title` VARCHAR(250) NOT NULL,
+`template_type` VARCHAR(250) NOT NULL,
+`owner` VARCHAR(250) NOT NULL,
+`access_level` VARCHAR(250),
+`date_created` DATETIME NOT NULL,
+  PRIMARY KEY (`template_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO `templates` (`template_id`, `title`, `template_type`, `owner`, `access_level`) VALUES
+(1, 'transfer', 'active', 'john smith', 'manager');
+
+CREATE TABLE stepdetails (
+  `step_id` INT(10) NOT NULL,
+  `template_id` INT(10) NOT NULL,
+  `step_title` VARCHAR(250) NOT NULL,
+  `order` int(10) NOT NULL,
+  PRIMARY KEY (`step_id`, `template_id`)
+)
+
+INSERT INTO `stepdetails` VALUES (1, 1, 'Testing Template Default Task', 1)
+
+
+// Tables According to Pham's Report
+
+CREATE TABLE `taskType_T` (
+  `taskType_id` INT(10) NOT NULL,
+  `taskType_title` VARCHAR(250) NOT NULL,
+  `taskType_info` VARCHAR(250),
+  PRIMARY KEY (`taskType_id`)
+);
+
+INSERT INTO `taskType_T` VALUES 
+(1, 'urgent', 'task with high priority that needs to get done ASAP'),
+(2, 'normal', 'task with normal priority');
+
+CREATE TABLE `taskStatus_T` (
+  `taskStatus_id` INT(10) NOT NULL,
+  `taskStatus_title` VARCHAR(250) NOT NULL,
+  `taskStatus_info` VARCHAR(25),
+  PRIMARY KEY (`taskStatus_id`)
+);
+
+INSERT INTO `taskStatus_T` VALUES 
+(1, 'progress', 'the task is not done yet'),
+(2, 'done', 'task that has been done'),
+(3, 'deleted', 'not visible anymore'),
+(4, 'paused', 'task that is paused, resume will take it to the progress status');
+
+CREATE TABLE `templateStatus_T` (
+  `templateStatus_id` INT(10) NOT NULL,
+  `templateStatus_title` VARCHAR(250) NOT NULL,
+  `templateStatus_info` VARCHAR(250),
+  PRIMARY KEY (`templateStatus_id`)
+);
+
+INSERT INTO `templateStatus_T` VALUES
+(1, 'ready', 'template is ready to be used'),
+(2, 'not-ready', 'the template is not ready or should not be used now'),
+(3, 'deleted', 'not visible anymore');
+
+//Megan's Tables
+
+CREATE TABLE `taskTemplate_T` (
+`taskTemplate_id` INT(10) NOT NULL AUTO_INCREMENT,
+`policy_id` INT(10) NOT NULL,
+`task_type` INT(10) NOT NULL,
+`task_title` VARCHAR(50) NOT NULL,
+`task_instructions` VARCHAR(250),
+`templateStatus_id` INT(10) NOT NULL,
+PRIMARY KEY(`taskTemplate_id`)
+);
+
+INSERT INTO `taskTemplate_T` VALUES (001, 02, 2, 'report', 'Manager creates report file and adds part A,B, and C; staff view part B; customer view part C', 1),
+(002, 03, 1, 'travel', 'Manager creates travel form and fill-in part A, staff fill-in part B, customer view and sign-in part C', 1);
+
+CREATE TABLE `taskTemplateDetails_T` (
+`taskTemplate_id` INT(10) NOT NULL,
+`userRole_id` INT(10) NOT NULL,
+`dataType_id` INT(10) NOT NULL,
+PRIMARY KEY(`taskTemplate_id`,`userRole_id`)
+);
+
+INSERT INTO `taskTemplateDetails_T` VALUES 
+(001,2,4),
+(001,3,4),
+(001,4,4),
+(002,2,5),
+(002,3,5),
+(002,4,5);
+
+CREATE TABLE `jobTemplate_T` (
+`jobTemplate_id` INT(10) NOT NULL AUTO_INCREMENT,
+`job_title` VARCHAR(25) NOT NULL,
+`job_instructions` VARCHAR(250),
+`templateStatus_id` INT(10) NOT NULL,
+PRIMARY KEY(`jobTemplate_id`)
+);
+
+INSERT INTO `jobTemplate_T` VALUES 
+(001,'report', 'Manager creates report file and adds part A,B, and C; staff view part B; customer view part C', 1),
+(002,'travel','Manager creates travel form and fill-in part A, staff fill-in part B, customer view and sign-in part C', 1);
+
+
+***********************
+**** Mike's Tables ****
+***********************
+
+
+CREATE TABLE `jobTemplateDetails_T` (
+  `jobTemplate_id` INT(10) NOT NULL,
+  `taskTemplate_id` INT(10) NOT NULL,
+  `job_taskOrder` INT(10) NOT NULL,
+  PRIMARY KEY(`jobTemplate_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO
+  `jobTemplateDetails_T`
+VALUES
+  (001, 001, 1),
+  (002, 002, 2);
+
+CREATE TABLE `task_T` (
+`task_id` INT(10) NOT NULL AUTO_INCREMENT,
+`policy_id` INT(10) NOT NULL,
+`task_type` INT(10) NOT NULL,
+`task_status` INT(10) NOT NULL,
+`task_owner` INT(10) NOT NULL,
+`task_title` VARCHAR(50) NOT NULL,
+`task_instructions` VARCHAR(250),
+`task_deadline` DATETIME NOT NULL,
+`task_created` DATETIME NOT NULL,
+PRIMARY KEY(`task_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO
+  `task_T` (
+    `policy_id`,
+    `task_type`,
+    `task_status`,
+    `task_owner`,
+    `task_title`,
+    `task_instructions`
+  )
+VALUES
+  (
+    02,
+    2,
+    0,
+    002,
+    'report',
+    'Manager creates report file and adds part A,B, and C; staff view part B; customer view part C'
+  ),
+  (
+    03,
+    1,
+    0,
+    003,
+    'travel',
+    'Manager creates travel form and fill-in part A, staff fill-in part B, customer view and sign-in part C'
+  );
+
+CREATE TABLE `taskDetails_T` (
+  `task_id` INT(10) NOT NULL,
+  `user_id` INT(10) NOT NULL,
+  `data_id` INT(10) NOT NULL,
+  `taskPart_status` INT(10) NOT NULL,
+  PRIMARY KEY(`task_id`, `user_id`)
+) ENGINE = InnoDB DEFAULT CHARSET = latin1;
+
+INSERT INTO
+  `taskDetails_T`
+VALUES
+  (000001, 002, 0104, 1),
+  (000001, 004, 0104, 1),
+  (000001, 006, 0104, 0),
+  (000002, 003, 0105, 1),
+  (000002, 005, 0105, 1),
+  (000002, 007, 0105, 0);
+  
+
+***********************
+**** Ron's Tables ****
+***********************
+  
+  
+  CREATE TABLE `jobType_T` (
+`jobType_id` INT(10) NOT NULL AUTO_INCREMENT,
+`jobType_title` VARCHAR(25) NOT NULL,
+`jobType_info` VARCHAR(250) NOT NULL,
+  PRIMARY KEY (`jobType_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO `jobType_T` (`jobType_id`, `jobType_title`, `jobType_info`) VALUES
+(1, 'urgent', 'job with high priority that needs to get done asap'),
+(2, 'normal', 'job with normal priority');
+
+CREATE TABLE `jobStatus_T` (
+`jobStatus_id` INT(10) NOT NULL AUTO_INCREMENT,
+`jobStatus_title` VARCHAR(25) NOT NULL,
+`jobStatus_info` VARCHAR(250) NOT NULL,
+  PRIMARY KEY (`jobStatus_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO `jobStatus_T` (`jobStatus_id`, `jobStatus_title`, `jobStatus_info`) VALUES
+(1, 'progress', 'job that is not done yet'),
+(2, 'done', 'job that has been done'),
+(3, 'deleted', 'not visible anymore');
+
+CREATE TABLE `job_T` (
+`job_id` INT(10) NOT NULL AUTO_INCREMENT,
+`job_status` INT(10) NOT NULL,
+`job_owner` INT(10) NOT NULL,
+`job_title` VARCHAR(25) NOT NULL,
+`job_instructions` VARCHAR(250) NOT NULL,
+`job_deadline` DATETIME NOT NULL,
+`job_created` DATETIME NOT NULL,
+  PRIMARY KEY (`job_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO `job_T` (`job_id`, `job_status`, `job_owner`, `job_title`, `job_instructions`, `job_deadline`, `job_created`) VALUES
+(000001, 0, 002, 'report', 'Manager creates report file and adds part A,B, and C; staff view part B; customer view part C', 2019-01-19 05:10:28, 2019-01-19 05:10:28),
+(000002, 0, 003, 'travel', 'Manager creates travel form and fill-in part A, staff fill-in part B, customer view and sign-in part C', 2019-01-19 09:13:07, 2019-01-19 09:13:07);
+
+
+CREATE TABLE `jobDetails_T` (    
+`job_id` INT(10) NOT NULL,
+`task_id` INT(10) NOT NULL,
+`job_taskOrder` INT(10) NOT NULL,
+PRIMARY KEY (`job_id`),
+FOREIGN KEY (`job_id`) REFERENCES job_T('job_id'),             ** TBD **
+FOREIGN KEY (`task_id`) REFERENCES taskDetails_T('task_id')    ** TBD **
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
