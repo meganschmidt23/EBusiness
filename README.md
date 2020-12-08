@@ -27,5 +27,5 @@ Online E-Collaboration Website (Jobs only)
   
   Testing for Submission: https://cs.newpaltz.edu/e/b-f20-36/test/
   
-                          https://cs.newpaltz.edu/e/b-f20-36/testP2V3/
+  https://cs.newpaltz.edu/e/b-f20-36/testP2V3/
   
